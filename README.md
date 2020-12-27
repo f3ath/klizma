@@ -1,5 +1,5 @@
 # klizma
-A minimalistic DI (Dependency Injection) container for Dart.
+A minimalistic DI (Dependency Injection) container for Dart. Inspired by [injector](https://pub.dev/packages/injector).
 ```dart
 import 'package:klizma/klizma.dart';
 
