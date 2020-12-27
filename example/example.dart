@@ -1,6 +1,3 @@
-# klizma
-A minimalistic DI (Dependency Injection) container for Dart.
-```dart
 import 'package:klizma/klizma.dart';
 
 void main() {
@@ -55,4 +52,3 @@ class Car {
 
   final String sound;
 }
-```
