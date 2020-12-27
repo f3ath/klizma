@@ -1,3 +1,3 @@
-## [Unreleased]
+## Unreleased
 ### Added
 - Initial version

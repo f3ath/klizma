@@ -24,7 +24,7 @@ mixin KlizmaMixin {
       {String name = '', bool cached = true}) {
     final map = (_providers[T.hashCode] ??= <String, Provider<T>>{});
     if (map.containsKey(name)) {
-      throw StateError('Service already exists');
+      throw StateError('Service already exists: ${_serviceName(T, name)}');
     }
     final provider = Provider<T>(factory);
     map[name] = cached ? Singleton<T>(provider) : provider;
@@ -48,6 +48,10 @@ mixin KlizmaMixin {
   }
 
   Provider<T> _provider<T extends Object>(String name) =>
-      (_providers[T.hashCode]?[name] ?? (throw StateError('Service not found')))
+      (_providers[T.hashCode]?[name] ??
+              (throw StateError('Service not found: ${_serviceName(T, name)}')))
           as Provider<T>;
+
+  String _serviceName<T>(Type type, String name) =>
+      type.toString() + (name.isNotEmpty ? '($name)' : '');
 }
