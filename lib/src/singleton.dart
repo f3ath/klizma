@@ -1,9 +1,9 @@
-import 'package:klizma/src/provider.dart';
+import 'package:klizma/src/lambda.dart';
 
-class Singleton<T> implements Provider<T> {
+class Singleton<T> implements Lambda<T> {
   Singleton(this._provider);
 
-  final Provider<T> _provider;
+  final Lambda<T> _provider;
 
   T? _cached;
 

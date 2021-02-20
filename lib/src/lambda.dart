@@ -1,5 +1,5 @@
-class Provider<T> {
-  const Provider(this._lambda);
+class Lambda<T> {
+  const Lambda(this._lambda);
 
   final T Function() _lambda;
 

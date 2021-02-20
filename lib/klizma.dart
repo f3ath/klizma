@@ -1,6 +1,7 @@
 library klizma;
 
-import 'package:klizma/src/provider.dart';
+import 'package:klizma/src/lambda.dart';
+import 'package:klizma/src/service.dart';
 import 'package:klizma/src/singleton.dart';
 
 /// This is a Dependency Injection container.
@@ -12,7 +13,7 @@ class Klizma with KlizmaMixin {
 
 /// This is the implementation of the Dependency Injection container.
 mixin KlizmaMixin {
-  final _providers = <int, Map<String, Provider>>{};
+  final _providers = <int, Map<String, Lambda>>{};
 
   /// Adds a service [factory] of type [T] to the container.
   /// Specify [name] to have several (named) factories of the same type.
@@ -22,11 +23,11 @@ mixin KlizmaMixin {
   /// Throws [StateError] if the service factory is already registered.
   void add<T extends Object>(T Function() factory,
       {String name = '', bool cached = true}) {
-    final map = (_providers[T.hashCode] ??= <String, Provider<T>>{});
+    final map = (_providers[T.hashCode] ??= <String, Lambda<T>>{});
     if (map.containsKey(name)) {
-      throw StateError('Service already exists: ${_serviceName(T, name)}');
+      throw StateError('Service already exists: ${Service(T, name)}');
     }
-    final provider = Provider<T>(factory);
+    final provider = Lambda<T>(factory);
     map[name] = cached ? Singleton<T>(provider) : provider;
   }
 
@@ -47,11 +48,8 @@ mixin KlizmaMixin {
     }
   }
 
-  Provider<T> _provider<T extends Object>(String name) =>
+  Lambda<T> _provider<T extends Object>(String name) =>
       (_providers[T.hashCode]?[name] ??
-              (throw StateError('Service not found: ${_serviceName(T, name)}')))
-          as Provider<T>;
-
-  String _serviceName<T>(Type type, String name) =>
-      type.toString() + (name.isNotEmpty ? '($name)' : '');
+              (throw StateError('Service not found: ${Service(T, name)}')))
+          as Lambda<T>;
 }
