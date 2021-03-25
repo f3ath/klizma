@@ -20,6 +20,5 @@ doc/api/
 *.js.deps
 *.js.map
 
-# test-coverage
-test/.test_coverage.dart
-coverage
+# test coverage
+/.coverage/

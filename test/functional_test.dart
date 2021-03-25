@@ -51,10 +51,52 @@ void main() {
     expect(() => di<Engine>('foo'), throwsStateError);
   });
 
-  test('Throws error when service exists', () {
+  test('add() throws error when service exists', () {
     final di = Klizma();
     di.add(() => Engine());
     expect(() => di.add(() => Engine()), throwsStateError);
+  });
+
+  test('replace() throws error when service does not exist', () {
+    final di = Klizma();
+    expect(() => di.replace(() => Engine()), throwsStateError);
+  });
+
+  test('replace() replaces existing service', () {
+    final di = Klizma();
+    di.add<String>(() => 'foo');
+    di.add<String>(() => 'foo.special', name: 'special');
+    di.add<String>(() => 'foo.uncached', name: 'uncached', cached: false);
+
+    expect(di.get<String>(), 'foo');
+    expect(di.get<String>('special'), 'foo.special');
+    expect(di.get<String>('uncached'), 'foo.uncached');
+
+    di.replace<String>(() => 'bar');
+
+    expect(di.get<String>(), 'bar');
+    expect(di.get<String>('special'), 'foo.special');
+    expect(di.get<String>('uncached'), 'foo.uncached');
+
+    di.replace<String>(() => 'bar.special', name: 'special');
+
+    expect(di.get<String>(), 'bar');
+    expect(di.get<String>('special'), 'bar.special');
+    expect(di.get<String>('uncached'), 'foo.uncached');
+
+    di.replace<String>(() => 'bar.uncached', name: 'uncached', cached: false);
+
+    expect(di.get<String>(), 'bar');
+    expect(di.get<String>('special'), 'bar.special');
+    expect(di.get<String>('uncached'), 'bar.uncached');
+  });
+
+  test('set() returns true/false', () {
+    final di = Klizma();
+    expect(di.set(() => Engine()), isFalse);
+    expect(di.set(() => Engine()), isTrue);
+    expect(di.set(() => Engine(), name: 'test'), isFalse);
+    expect(di.set(() => Engine(), name: 'test'), isTrue);
   });
 
   test('Class name collision safety', () {
