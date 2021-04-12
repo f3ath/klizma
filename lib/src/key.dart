@@ -1,4 +1,4 @@
-class Key<T extends Object> {
+class Key<T> {
   const Key(this.name);
 
   final String name;

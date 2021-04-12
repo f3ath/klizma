@@ -1,7 +1,10 @@
-class Lambda<T> {
-  const Lambda(this._lambda);
+import 'package:klizma/src/api.dart';
 
-  final T Function() _lambda;
+class Lambda<T> implements Factory<T> {
+  const Lambda(this._f);
 
-  T get() => _lambda();
+  final FactoryFun<T> _f;
+
+  @override
+  T call(ServiceLocator get) => _f(get);
 }

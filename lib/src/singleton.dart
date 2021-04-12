@@ -1,14 +1,12 @@
-import 'package:klizma/src/lambda.dart';
+import 'package:klizma/src/api.dart';
 
-class Singleton<T> implements Lambda<T> {
-  Singleton(this._provider);
+class Singleton<T> implements Factory<T> {
+  Singleton(this._f);
 
-  final Lambda<T> _provider;
+  final FactoryFun<T> _f;
 
-  T? _cached;
+  T? value;
 
   @override
-  T get() => _cached ??= _provider.get();
-
-  T? getCached() => _cached;
+  T call(ServiceLocator get) => value ?? (value = _f(get));
 }

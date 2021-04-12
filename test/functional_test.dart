@@ -5,8 +5,8 @@ import 'other_engine.dart' as other;
 
 void main() {
   test('Can produce a service using singleton', () {
-    final di = Klizma();
-    di.add(() => Engine());
+    final di = Container();
+    di.provide((_) => Engine());
     final engine1 = di.get<Engine>();
     final engine2 = di.get<Engine>();
     expect(engine1, isA<Engine>());
@@ -15,105 +15,108 @@ void main() {
   });
 
   test('Can produce a named service using singleton', () {
-    final di = Klizma();
-    di.add(() => Engine());
-    di.add(() => Engine('Diesel'), name: 'diesel');
-    expect(di<Engine>(), isNot(same(di<Engine>('diesel'))));
-    expect(di<Engine>('diesel'), same(di<Engine>('diesel')));
-    expect(di<Engine>(), same(di<Engine>()));
+    final di = Container();
+    di.provide((_) => Engine());
+    di.provide((_) => Engine('Diesel'), name: 'diesel');
+    expect(di.get<Engine>(), isNot(same(di.get<Engine>('diesel'))));
+    expect(di.get<Engine>('diesel'), same(di.get<Engine>('diesel')));
+    expect(di.get<Engine>(), same(di.get<Engine>()));
   });
 
   test('Can produce a service using factory', () {
-    final di = Klizma();
-    di.add(() => Engine(), cached: false);
-    final engine1 = di<Engine>();
-    final engine2 = di<Engine>();
+    final di = Container();
+    di.provide((_) => Engine(), cached: false);
+    final engine1 = di.get<Engine>();
+    final engine2 = di.get<Engine>();
     expect(engine1, isA<Engine>());
     expect(engine2, isA<Engine>());
     expect(engine1, isNot(same(engine2)));
   });
 
   test('Can produce a named service using factory', () {
-    final di = Klizma();
-    di.add(() => Engine(), cached: false);
-    di.add(() => Engine('diesel'), cached: false, name: 'diesel');
-    expect(di<Engine>(), isNot(same(di<Engine>())));
-    expect(di<Engine>().name, equals(di<Engine>().name));
-    expect(di<Engine>('diesel'), isNot(same(di<Engine>('diesel'))));
-    expect(di<Engine>('diesel').name, equals(di<Engine>('diesel').name));
-    expect(di<Engine>().name, isNot(equals(di<Engine>('diesel').name)));
+    final di = Container();
+    di.provide((_) => Engine(), cached: false);
+    di.provide((_) => Engine('diesel'), cached: false, name: 'diesel');
+    expect(di.get<Engine>(), isNot(same(di.get<Engine>())));
+    expect(di.get<Engine>().name, equals(di.get<Engine>().name));
+    expect(di.get<Engine>('diesel'), isNot(same(di.get<Engine>('diesel'))));
+    expect(
+        di.get<Engine>('diesel').name, equals(di.get<Engine>('diesel').name));
+    expect(di.get<Engine>().name, isNot(equals(di.get<Engine>('diesel').name)));
   });
 
   test('Throws error when service not found', () {
-    final di = Klizma();
-    di.add(() => Engine());
-    expect(() => di<String>(), throwsStateError);
-    expect(() => di<Engine>('foo'), throwsStateError);
+    final di = Container();
+    di.provide((_) => Engine());
+    expect(di.has<Engine>(), isTrue);
+    expect(di.has<String>(), isFalse);
+    expect(di.has<Engine>('foo'), isFalse);
+    expect(() => di.get<String>(), throwsStateError);
+    expect(() => di.get<Engine>('foo'), throwsStateError);
   });
 
-  test('add() throws error when service exists', () {
-    final di = Klizma();
-    di.add(() => Engine());
-    expect(() => di.add(() => Engine()), throwsStateError);
-  });
-
-  test('replace() throws error when service does not exist', () {
-    final di = Klizma();
-    expect(() => di.replace(() => Engine()), throwsStateError);
-  });
-
-  test('replace() replaces existing service', () {
-    final di = Klizma();
-    di.add<String>(() => 'foo');
-    di.add<String>(() => 'foo.special', name: 'special');
-    di.add<String>(() => 'foo.uncached', name: 'uncached', cached: false);
+  test('register() replaces existing service', () {
+    final di = Container();
+    di.provide<String>((_) => 'foo');
+    di.provide<String>((_) => 'foo.special', name: 'special');
+    di.provide<String>((_) => 'foo.uncached', name: 'uncached', cached: false);
 
     expect(di.get<String>(), 'foo');
     expect(di.get<String>('special'), 'foo.special');
     expect(di.get<String>('uncached'), 'foo.uncached');
 
-    di.replace<String>(() => 'bar');
+    di.provide<String>((_) => 'bar');
 
     expect(di.get<String>(), 'bar');
     expect(di.get<String>('special'), 'foo.special');
     expect(di.get<String>('uncached'), 'foo.uncached');
 
-    di.replace<String>(() => 'bar.special', name: 'special');
+    di.provide<String>((_) => 'bar.special', name: 'special');
 
     expect(di.get<String>(), 'bar');
     expect(di.get<String>('special'), 'bar.special');
     expect(di.get<String>('uncached'), 'foo.uncached');
 
-    di.replace<String>(() => 'bar.uncached', name: 'uncached', cached: false);
+    di.provide<String>((_) => 'bar.uncached', name: 'uncached', cached: false);
 
     expect(di.get<String>(), 'bar');
     expect(di.get<String>('special'), 'bar.special');
     expect(di.get<String>('uncached'), 'bar.uncached');
   });
 
-  test('set() returns true/false', () {
-    final di = Klizma();
-    expect(di.set(() => Engine()), isFalse);
-    expect(di.set(() => Engine()), isTrue);
-    expect(di.set(() => Engine(), name: 'test'), isFalse);
-    expect(di.set(() => Engine(), name: 'test'), isTrue);
-  });
-
   test('Class name collision safety', () {
-    final di = Klizma();
-    di.add(() => Engine());
-    di.add(() => other.Engine());
-    expect(di<Engine>(), isA<Engine>());
-    expect(di<other.Engine>(), isA<other.Engine>());
-    expect(di<Engine>(), isNot(same(di<other.Engine>())));
+    final di = Container();
+    di.provide((_) => Engine());
+    di.provide((_) => other.Engine());
+    expect(di.get<Engine>(), isA<Engine>());
+    expect(di.get<other.Engine>(), isA<other.Engine>());
+    expect(di.get<Engine>(), isNot(same(di.get<other.Engine>())));
   });
 
   test('Get cached', () {
-    final di = Klizma();
-    di.add(() => Engine());
+    final di = Container();
+    di.provide((_) => Engine());
     expect(di.getCached<Engine>(), isNull);
-    di<Engine>();
+    di.get<Engine>();
     expect(di.getCached<Engine>(), isNotNull);
+  });
+
+  test('Can use closures', () async {
+    final square = (int a) => a * a;
+    final str = (int a) => a.toString();
+
+    Future<int?> fun(Engine _) async => 42;
+
+    final di = Container();
+    di.provide((_) => square);
+    di.provide((_) => str);
+    di.provide((_) => fun);
+    di.provide((_) => (_) async => 'yo');
+
+    expect(di.get<int Function(int _)>()(3), 9);
+    expect(di.get<String Function(int _)>()(3), '3');
+    expect(await di.get<Future<int?> Function(Engine _)>()(Engine()), 42);
+    expect(await di.get<Future<String> Function(dynamic _)>()(Engine()), 'yo');
   });
 }
 
