@@ -1,7 +1,7 @@
-class Lambda<T> {
-  const Lambda(this._lambda);
+import 'package:klizma/src/factory_function.dart';
 
-  final T Function() _lambda;
+class Factory<T> {
+  const Factory(this.get);
 
-  T get() => _lambda();
+  final FactoryFun<T> get;
 }
