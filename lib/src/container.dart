@@ -4,21 +4,22 @@ import 'package:klizma/src/lambda.dart';
 import 'package:klizma/src/singleton.dart';
 
 /// This is a Dependency Injection container.
-/// Use it as is or inherit from [KlizmaMixin] to extend functionality.
-class Klizma {
+/// Use it as is or inherit from [ContainerMixin] to extend functionality.
+class Container with ContainerMixin {}
+
+/// This is a Dependency Injection container implementation.
+mixin ContainerMixin {
   /// Registers a service [factory] of type [T] in the container.
   /// Specify [name] to have several (named) factories of the same type.
   /// By default, all services are singletons. Set [cached] to `false`
   /// to get a new instance each time the service is requested.
-  ///
-  /// Returns the previously registered factory or null
-  Factory<T>? provide<T extends Object>(FactoryFun<T> factory,
+  void provide<T extends Object>(FactoryFun<T> factory,
       {String name = '', bool cached = true}) {
-    final key = Key<T>(name);
-    final prev = _map[key] as Factory<T>?;
-    _map[key] = cached ? Singleton<T>(factory) : Lambda<T>(factory);
-    return prev;
+    _map[Key<T>(name)] = cached ? Singleton<T>(factory) : Lambda<T>(factory);
   }
+
+  /// Returns true if the service is registered in the container
+  bool has<T>([String name = '']) => _map.containsKey(Key<T>(name));
 
   /// Returns the service instance for type [T].
   /// Specify [name] to get the named instance.

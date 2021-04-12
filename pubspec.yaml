@@ -1,6 +1,6 @@
 name: klizma
-version: 0.1.1
-description: A minimalistic DI (Dependency Injection) container for Dart.
+version: 0.2.0
+description: A minimalistic Dependency Injection and Service Locator implementation in Dart.
 homepage: https://github.com/f3ath/klizma
 
 environment:
