@@ -34,6 +34,7 @@ mixin ContainerMixin {
   T? getCached<T extends Object>([String name = '']) {
     final factory = _factory<T>(name);
     if (factory is Singleton<T>) return factory.value;
+    return null;
   }
 
   final _map = <Key, Factory>{};

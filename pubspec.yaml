@@ -1,5 +1,5 @@
 name: klizma
-version: 0.2.0
+version: 0.2.1
 description: A minimalistic Dependency Injection and Service Locator implementation in Dart.
 homepage: https://github.com/f3ath/klizma
 
@@ -7,7 +7,12 @@ environment:
   sdk: '>=2.12.0 <3.0.0'
 
 dev_dependencies:
-  pedantic: ^1.11.0
+  lints: ^2.0.1
   test: ^1.16.8
   coverage: ^1.0.2
   check_coverage: ^0.0.2
+
+cider:
+  changelog:
+    diff: https://github.com/f3ath/klizma/compare/%from%...%to%
+    tag: https://github.com/f3ath/klizma/releases/tag/%tag%
