@@ -1,3 +1,7 @@
+## 0.2.1 - 2022-12-12
+### Changed
+- Updated dependencies
+
 ## [0.2.0] - 2021-04-11
 ### Changed
 - **Major API rework**

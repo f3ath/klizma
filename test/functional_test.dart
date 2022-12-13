@@ -102,8 +102,8 @@ void main() {
   });
 
   test('Can use closures', () async {
-    final square = (int a) => a * a;
-    final str = (int a) => a.toString();
+    square(int a) => a * a;
+    str(int a) => a.toString();
 
     Future<int?> fun(Engine _) async => 42;
 
